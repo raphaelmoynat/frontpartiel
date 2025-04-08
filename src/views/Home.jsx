@@ -9,7 +9,7 @@ const QRCodeScanner = () => {
     useEffect(() => {
         const startCamera = async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream
                 }
@@ -18,7 +18,7 @@ const QRCodeScanner = () => {
             }
         };
 
-        startCamera();
+        startCamera()
 
         const interval = setInterval(() => {
             scanQRCode()
@@ -30,16 +30,16 @@ const QRCodeScanner = () => {
     const scanQRCode = () => {
         if (canvasRef.current && videoRef.current) {
             const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
+            const context = canvas.getContext('2d')
             if (context) {
                 context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
                 const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
                 if (code) {
-                    setQRContent(code.data);
-                    console.log(code.data);
+                    setQRContent(code.data)
+                    console.log( code.data)
                 } else {
-                    setQRContent(null);
+                    setQRContent(null)
                 }
             }
         }
@@ -49,6 +49,7 @@ const QRCodeScanner = () => {
         <div>
             <div style={{ width: '320px', height: '240px' }}>
                 <video ref={videoRef} width="320" height="240" autoPlay />
+                <canvas ref={canvasRef} width="320" height="240" />
             </div>
             {qrContent && (
                 <div>
