@@ -2,18 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const CameraComponent = () => {
     const [cameraActive, setCameraActive] = useState(false)
-    const [useBackCamera, setUseBackCamera] = useState(true)
     const videoRef = useRef(null)
 
     useEffect(() => {
-        return () => stopCamera();
-    }, [])
+        return () => stopCamera()
+    }, []);
 
     const startCamera = async () => {
-
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: useBackCamera ? 'environment' : 'user' }
+                video: true,
             })
 
             if (videoRef.current) {
@@ -26,6 +24,7 @@ const CameraComponent = () => {
             setCameraActive(true)
         } catch (error) {
             console.error(error)
+
         }
     };
 
@@ -90,35 +89,19 @@ const CameraComponent = () => {
                         Arrêter la caméra
                     </button>
                 ) : (
-                    <>
-                        <button
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: 'blue',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer',
-                                marginRight: '10px',
-                            }}
-                            onClick={startCamera}
-                        >
-                            Activer la caméra
-                        </button>
-                        <button
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: 'grey',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => setUseBackCamera(!useBackCamera)}
-                        >
-                            Utiliser la caméra {useBackCamera ? 'frontale' : 'arrière'}
-                        </button>
-                    </>
+                    <button
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: 'blue',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={startCamera}
+                    >
+                        Activer la caméra
+                    </button>
                 )}
             </div>
         </div>
