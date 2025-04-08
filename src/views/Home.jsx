@@ -1,113 +1,62 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import jsQR from 'jsqr';
 
-const CameraComponent = () => {
-    const [cameraActive, setCameraActive] = useState(false)
+const QRCodeScanner = () => {
     const videoRef = useRef(null)
+    const canvasRef = useRef(null)
+    const [qrContent, setQRContent] = useState(null)
 
     useEffect(() => {
-        return () => stopCamera()
-    }, []);
+        const startCamera = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        };
 
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+        startCamera();
 
-    const startCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: isMobile ? 'environment' : 'user' },
-            });
+        const interval = setInterval(() => {
+            scanQRCode()
+        }, 100)
 
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream
-                videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play()
+        return () => clearInterval(interval)
+    }, [])
+
+    const scanQRCode = () => {
+        if (canvasRef.current && videoRef.current) {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code) {
+                    setQRContent(code.data);
+                    console.log(code.data);
+                } else {
+                    setQRContent(null);
                 }
             }
-
-            setCameraActive(true)
-        } catch (error) {
-            console.error(error)
-
         }
     };
 
-    const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks()
-            tracks.forEach(track => track.stop())
-            videoRef.current.srcObject = null
-        }
-        setCameraActive(false)
-    }
-
     return (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h1>Scanner</h1>
-
-            <div style={{
-                maxWidth: '500px',
-                margin: '0 auto',
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                backgroundColor: '#000',
-                minHeight: '300px',
-            }}>
-                <video
-                    ref={videoRef}
-                    style={{
-                        width: '100%',
-                        height: 'auto',
-                        display: cameraActive ? 'block' : 'none',
-                    }}
-                    autoPlay
-                    playsInline
-                    muted
-                />
-                {!cameraActive && (
-                    <div style={{
-                        color: '#fff',
-                        padding: '20px',
-                        textAlign: 'center',
-                        fontSize: '16px',
-                    }}>
-                        La caméra est désactivée.
-                    </div>
-                )}
+        <div>
+            <div style={{ width: '320px', height: '240px' }}>
+                <video ref={videoRef} width="320" height="240" autoPlay />
             </div>
-
-            <div style={{ marginTop: '20px' }}>
-                {cameraActive ? (
-                    <button
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: 'red',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
-                        onClick={stopCamera}
-                    >
-                        Arrêter la caméra
-                    </button>
-                ) : (
-                    <button
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: 'blue',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
-                        onClick={startCamera}
-                    >
-                        Activer la caméra
-                    </button>
-                )}
-            </div>
+            {qrContent && (
+                <div>
+                    <p>{qrContent}</p>
+                </div>
+            )}
         </div>
     );
 };
 
-export default CameraComponent;
+export default QRCodeScanner;
