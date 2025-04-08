@@ -1,141 +1,128 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useRef, useEffect } from 'react';
 
-const Home = () => {
-    const { currentUser } = useContext(AuthContext);
-    const isLoggedIn = !!currentUser;
-
-    const [hasPermission, setHasPermission] = useState(null);
-    const [cameraActive, setCameraActive] = useState(false);
-    const [useBackCamera, setUseBackCamera] = useState(true);
-    const videoRef = useRef(null);
+const CameraComponent = () => {
+    const [cameraActive, setCameraActive] = useState(false)
+    const [useBackCamera, setUseBackCamera] = useState(true)
+    const videoRef = useRef(null)
 
     useEffect(() => {
-        console.log("État de la caméra:", cameraActive);
-        console.log("Référence vidéo:", videoRef.current);
-        if (videoRef.current) {
-            console.log("Source vidéo:", videoRef.current.srcObject);
-        }
-    }, [cameraActive]);
+        return () => stopCamera();
+    }, [])
 
-    const requestCameraPermission = async () => {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            console.error(error);
-            setHasPermission(false);
-            return;
-        }
+    const startCamera = async () => {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: useBackCamera ? 'environment' : 'user' }
-            });
+            })
 
             if (videoRef.current) {
-                videoRef.current.srcObject = stream;
+                videoRef.current.srcObject = stream
                 videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play();
-                };
+                    videoRef.current.play()
+                }
             }
 
-            setHasPermission(true);
-            setCameraActive(true);
-        } catch (err) {
-            console.error("Erreur lors de l'accès à la caméra:", err);
-            setHasPermission(false);
+            setCameraActive(true)
+        } catch (error) {
+            console.error(error)
         }
     };
 
     const stopCamera = () => {
-        console.log("Arrêt");
         if (videoRef.current && videoRef.current.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
-            videoRef.current.srcObject = null;
-            setCameraActive(false);
+            const tracks = videoRef.current.srcObject.getTracks()
+            tracks.forEach(track => track.stop())
+            videoRef.current.srcObject = null
         }
-    };
-
-    const userDisplayName = currentUser?.email || currentUser?.displayName || currentUser;
+        setCameraActive(false)
+    }
 
     return (
-        <div className="container mt-5">
-            <div className="jumbotron">
-                <h1 className="text-center mb-4">Welcome to my app</h1>
-                {!isLoggedIn ? (
-                    <div className="text-center">
-                        <p>Please log in</p>
-                        <Link to="/login" className="btn btn-primary">Login</Link>
-                        <Link to="/register" className="btn btn-secondary ms-2">Register</Link>
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <h1>Scanner</h1>
+
+            <div style={{
+                maxWidth: '500px',
+                margin: '0 auto',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                backgroundColor: '#000',
+                minHeight: '300px',
+            }}>
+                <video
+                    ref={videoRef}
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: cameraActive ? 'block' : 'none',
+                    }}
+                    autoPlay
+                    playsInline
+                    muted
+                />
+                {!cameraActive && (
+                    <div style={{
+                        color: '#fff',
+                        padding: '20px',
+                        textAlign: 'center',
+                        fontSize: '16px',
+                    }}>
+                        La caméra est désactivée.
                     </div>
+                )}
+            </div>
+
+            <div style={{ marginTop: '20px' }}>
+                {cameraActive ? (
+                    <button
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: 'red',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={stopCamera}
+                    >
+                        Arrêter la caméra
+                    </button>
                 ) : (
-                    <div className="text-center">
-                        <p>You are logged in as {userDisplayName}</p>
-
-                        <div className="mt-4">
-                            <h1>Scanner</h1>
-
-                            {hasPermission === false && (
-                                <div className="alert alert-danger">
-                                    Accès refusé
-                                </div>
-                            )}
-
-                            <div className="camera-container" style={{ maxWidth: '500px', margin: '0 auto' }}>
-                                {cameraActive && (
-                                    <div className="video-wrapper" style={{
-                                        border: '1px solid #ccc',
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        marginBottom: '15px',
-                                        backgroundColor: '#f0f0f0',
-                                        minHeight: '300px'
-                                    }}>
-                                        <video
-                                            ref={videoRef}
-                                            style={{
-                                                width: '100%',
-                                                height: 'auto',
-                                                display: 'block',
-                                                backgroundColor: '#000'
-                                            }}
-                                            autoPlay
-                                            playsInline
-                                            muted
-                                        />
-                                    </div>
-                                )}
-
-                                {cameraActive ? (
-                                    <button
-                                        className="btn btn-danger mt-3"
-                                        onClick={stopCamera}
-                                    >
-                                        Arrêter la caméra
-                                    </button>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={requestCameraPermission}
-                                        >
-                                            Activer la caméra
-                                        </button>
-                                        <button
-                                            className="btn btn-secondary ms-2"
-                                            onClick={() => setUseBackCamera(!useBackCamera)}
-                                        >
-                                            Utiliser la caméra {useBackCamera ? 'frontale' : 'arrière'}
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <>
+                        <button
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: 'blue',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                marginRight: '10px',
+                            }}
+                            onClick={startCamera}
+                        >
+                            Activer la caméra
+                        </button>
+                        <button
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: 'grey',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setUseBackCamera(!useBackCamera)}
+                        >
+                            Utiliser la caméra {useBackCamera ? 'frontale' : 'arrière'}
+                        </button>
+                    </>
                 )}
             </div>
         </div>
     );
 };
 
-export default Home;
+export default CameraComponent;
