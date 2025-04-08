@@ -8,11 +8,13 @@ const CameraComponent = () => {
         return () => stopCamera()
     }, []);
 
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+
     const startCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-            })
+                video: { facingMode: isMobile ? 'environment' : 'user' },
+            });
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream
