@@ -18,7 +18,7 @@ function Login() {
             })
             login(username, response.data.token)
             console.log('réussi')
-            navigate('/')
+            navigate('/scan')
 
         } catch (error) {
             console.log(error)

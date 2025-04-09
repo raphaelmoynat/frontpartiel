@@ -19,7 +19,7 @@ function Register() {
             setPassword('')
             console.log("inscription réussie")
 
-            navigate('/login');
+            navigate('/');
 
         } catch (error) {
             console.log(error);
