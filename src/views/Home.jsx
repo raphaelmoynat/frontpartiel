@@ -81,6 +81,9 @@ function Home() {
         if (product) {
             addToCart(product)
             alert(`${product.name} ajouté au panier`)
+            if (!cameraActive) {
+                startCamera();
+            }
         }
     }
 
