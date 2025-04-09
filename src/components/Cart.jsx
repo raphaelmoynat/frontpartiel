@@ -48,7 +48,6 @@ function Cart() {
                                         className="form-control text-center"
                                         value={item.quantity}
                                         onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
-                                        min="1"
                                     />
                                 </div>
                             </div>
