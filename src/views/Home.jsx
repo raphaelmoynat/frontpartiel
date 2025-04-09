@@ -94,7 +94,11 @@ function Home() {
                         <div className="card-body">
                             <div className="text-center mb-3">
                                 <div className="position-relative d-inline-block">
-                                    <video ref={videoRef} className="rounded border" style={{ width: "100%", maxWidth: "400px", background: "black" }}/>
+                                    <video ref={videoRef}
+                                           playsInline
+                                           muted
+                                           autoPlay
+                                           className="rounded border" style={{ width: "100%", maxWidth: "400px", background: "black" }}/>
                                     <canvas ref={canvasRef} style={{ display: "none" }}/>
                                 </div>
                             </div>
