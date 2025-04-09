@@ -42,13 +42,14 @@ function Cart() {
 
                             <div className="d-flex justify-content-between align-items-center mb-2">
                                 <span>Quantité:</span>
-                                <div className="input-group" style={{ maxWidth: "120px" }}>
-                                    <input
-                                        type="number"
-                                        className="form-control text-center"
-                                        value={item.quantity}
-                                        onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
-                                    />
+                                <div className="input-group" style={{maxWidth: "120px"}}>
+                                    <button className="btn btn-secondary" type="button" onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}>
+                                        -
+                                    </button>
+                                    <div className="text-center mx-2 align-content-center">{item.quantity}</div>
+                                    <button className="btn btn-secondary" type="button" onClick={() => updateQuantity(item.id, Math.max(1, item.quantity + 1))}>
+                                        +
+                                    </button>
                                 </div>
                             </div>
 
