@@ -62,6 +62,9 @@ function Home() {
                     setResult(code.data)
                     const parsedData = JSON.parse(code.data)
                     setProduct(parsedData)
+                    if (!cameraActive) {
+                        startCamera();
+                    }
                 }
 
             }
