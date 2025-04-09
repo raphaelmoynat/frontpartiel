@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 function MyOrders() {
     const [orders, setOrders] = useState([])
     const navigate = useNavigate();
@@ -50,12 +51,19 @@ function MyOrders() {
                         <div key={order.id} className="card mb-3 shadow-sm">
                             <div className="card-header bg-light d-flex justify-content-between align-items-center">
                                 <span className="fw-bold">Commande id : {order.id}</span>
-                                <span className="badge bg-success">Total :{order.totalAmount} €</span>
+                                <div className="small text-muted">
+
+                                    <div className="small text-muted">
+                                        {order.createdAt && new Date(order.createdAt).toLocaleString('fr-FR')}
+                                    </div>
+
+                                </div>
                             </div>
                             <div className="card-body">
                                 <ul className="list-group list-group-flush mb-3">
                                     {order.items.map((item, index) => (
-                                        <li key={index} className="list-group-item d-flex justify-content-between align-items-center px-0">
+                                        <li key={index}
+                                            className="list-group-item d-flex justify-content-between align-items-center px-0">
                                             <div>
                                                 <span className="fw-medium">{item.productName}</span>
                                                 <div className="small text-muted">
@@ -65,11 +73,9 @@ function MyOrders() {
                                             <span>{item.subtotal} €</span>
                                         </li>
                                     ))}
-                                </ul>
 
-                                <div className="d-grid">
-                                    <button className="btn btn-sm btn-secondary">Détails de la commande</button>
-                                </div>
+                                </ul>
+                                <span className="badge bg-success mb-2">Total :{order.totalAmount} €</span>
                             </div>
                         </div>
                     ))}

@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect, useContext,} from 'react'
 import jsQR from 'jsqr'
 import {CartContext} from "../context/CartContext.jsx";
 
+
 function Home() {
     const videoRef = useRef(null)
     const canvasRef = useRef(null)
@@ -62,6 +63,7 @@ function Home() {
                     const parsedData = JSON.parse(code.data)
                     setProduct(parsedData)
                 }
+
             }
             frameId = requestAnimationFrame(scanQR)
         }

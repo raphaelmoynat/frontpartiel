@@ -26,7 +26,7 @@ function OrderConfirmation() {
             console.log(orderData);
             const response = await axios.post(
                 'https://backendpartiel.raphaelmoynat.com/api/orders/create',
-                orderData,  // Les données à envoyer
+                orderData,
                 {
                     headers: {
                         'Content-Type': 'application/json',
