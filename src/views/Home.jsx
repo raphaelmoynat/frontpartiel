@@ -62,9 +62,9 @@ function Home() {
                     setResult(code.data)
                     const parsedData = JSON.parse(code.data)
                     setProduct(parsedData)
-                    if (!cameraActive) {
-                        startCamera();
-                    }
+
+                    startCamera();
+                }
                 }
 
             }
@@ -84,9 +84,9 @@ function Home() {
         if (product) {
             addToCart(product)
             alert(`${product.name} ajouté au panier`)
-            if (!cameraActive) {
-                startCamera();
-            }
+
+            startCamera();
+
         }
     }
 
