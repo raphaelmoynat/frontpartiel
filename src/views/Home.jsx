@@ -63,7 +63,6 @@ function Home() {
                     const parsedData = JSON.parse(code.data)
                     setProduct(parsedData)
 
-                    startCamera();
 
                 }
 
@@ -85,7 +84,7 @@ function Home() {
             addToCart(product)
             alert(`${product.name} ajouté au panier`)
 
-            startCamera();
+
 
         }
     }
